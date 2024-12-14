@@ -27,15 +27,15 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 // Administrator Routes
 Route::middleware(['auth', 'role:Administrator'])->group(function () {
-    Route::get('/admin', [HomeController::class, 'adminDashboard'])->name('admin.dashboard');
+    Route::get('/admin')->name('admin.dashboard');
 });
 
 // Agent Routes
 Route::middleware(['auth', 'role:Agent'])->group(function () {
-    Route::get('/agent', [HomeController::class, 'agentDashboard'])->name('agent.dashboard');
+    Route::get('/agent')->name('agent.dashboard');
 });
 
 // Regular User Routes
 Route::middleware(['auth', 'role:Regular User'])->group(function () {
-    Route::get('/user', [HomeController::class, 'userDashboard'])->name('user.dashboard');
+    Route::get('/user')->name('user.dashboard');
 });

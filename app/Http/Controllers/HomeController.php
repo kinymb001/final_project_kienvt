@@ -19,33 +19,34 @@ class HomeController extends Controller
     /**
      * Show the application dashboard.
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
      */
     public function index()
     {
         $role = auth()->user()->role;
 
-        if ($role === 'Administrator') {
-            return redirect()->route('admin.dashboard');
-        } elseif ($role === 'Agent') {
-            return redirect()->route('agent.dashboard');
-        } else {
-            return redirect()->route('user.dashboard');
+        switch ($role) {
+            case 'Administrator':
+                return view('dashboard', ['role' => 'Admin']);
+            case 'Agent':
+                return view('dashboard', ['role' => 'Agent']);
+            default:
+                return view('dashboard', ['role' => 'User']);
         }
     }
 
-    public function adminDashboard()
-    {
-        return view('admin.dashboard');
-    }
-
-    public function agentDashboard()
-    {
-        return view('agent.dashboard');
-    }
-
-    public function userDashboard()
-    {
-        return view('user.dashboard');
-    }
+//    public function adminDashboard()
+//    {
+//        return view('admin.dashboard');
+//    }
+//
+//    public function agentDashboard()
+//    {
+//        return view('agent.dashboard');
+//    }
+//
+//    public function userDashboard()
+//    {
+//        return view('user.dashboard');
+//    }
 }
