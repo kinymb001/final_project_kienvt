@@ -9,6 +9,14 @@ class Ticket extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'title',
+        'description',
+        'priority',
+        'status',
+        'assigned_user_agent_id',
+        'created_by',
+    ];
     public function assignedUser()
     {
         return $this->belongsTo(User::class, 'assigned_user_agent_id');
@@ -22,5 +30,10 @@ class Ticket extends Model
     public function labels()
     {
         return $this->belongsToMany(Label::class, 'ticket_labels');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }
