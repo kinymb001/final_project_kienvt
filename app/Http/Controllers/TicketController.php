@@ -74,7 +74,9 @@ class TicketController extends Controller
         // Quyền: Admin hoặc Agent (được assign) mới được sửa
         if (Auth::user()->hasRole('Admin') ||
             (Auth::user()->hasRole('Agent') && Auth::id() === $ticket->assigned_user_agent_id)) {
-            return view('tickets.edit', compact('ticket'));
+            $categories = Category::all();
+            $labels = Label::all();
+            return view('tickets.edit', compact('ticket', 'categories', 'labels'));
         }
 
         abort(403, 'Unauthorized action.');
@@ -86,7 +88,7 @@ class TicketController extends Controller
         // Admin hoặc Agent (được assign) mới được phép cập nhật
         $user = Auth::user();
 
-        if (!$user->hasRole('Administrator') && $user->id !== $ticket->assigned_user_agent_id) {
+        if (!$user->hasRole('Admin') && $user->id !== $ticket->assigned_user_agent_id) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -94,10 +96,20 @@ class TicketController extends Controller
             'title'       => 'required|string|max:255',
             'description' => 'required|string',
             'priority'    => 'required|in:low,medium,high,critical',
-            'status'      => 'required|in:open,in_progress,closed',
+            'categories'  => 'required|array',
+            'labels'      => 'required|array',
         ]);
 
-        $ticket->update($request->only(['title', 'description', 'priority', 'status']));
+        // Cập nhật thông tin ticket
+        $ticket->update([
+            'title'       => $request->title,
+            'description' => $request->description,
+            'priority'    => $request->priority,
+        ]);
+
+        // Gắn lại categories và labels
+        $ticket->categories()->sync($request->categories);
+        $ticket->labels()->sync($request->labels);
 
         return redirect()->route('tickets.index')->with('success', 'Ticket updated successfully.');
     }
