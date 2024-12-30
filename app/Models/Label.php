@@ -9,6 +9,10 @@ class Label extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+    ];
+
     public function tickets()
     {
         return $this->belongsToMany(Ticket::class, 'ticket_labels');

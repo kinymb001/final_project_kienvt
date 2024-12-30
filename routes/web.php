@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LabelController;
 use App\Http\Controllers\TicketController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -55,4 +57,8 @@ Route::middleware(['auth'])->group(function () {
 
     // Route cập nhật trạng thái ticket (admin)
     Route::post('/tickets/{ticket}/status', [TicketController::class, 'changeStatus'])->name('tickets.status.update');
+
+    Route::resource('categories', CategoryController::class);
+
+    Route::resource('labels', LabelController::class);
 });
