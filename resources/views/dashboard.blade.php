@@ -29,12 +29,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="{{ route('categories.index') }}">
                                 <i class="bi bi-archive"></i> Categories
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="{{ route('labels.index') }}">
                                 <i class="bi bi-tag"></i> Labels
                             </a>
                         </li>

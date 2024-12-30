@@ -4,6 +4,10 @@
     <div class="container">
         <h1>Ticket List</h1>
 
+        <a href="{{ route('home') }}" class="btn btn-secondary mb-3">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+
         @if(Auth::user()->hasRole('Administrator') || Auth::user()->hasRole('Regular User'))
             <a href="{{ route('tickets.create') }}" class="btn btn-success mb-3">Create New Ticket</a>
         @endif
