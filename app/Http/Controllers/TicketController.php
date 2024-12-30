@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Label;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,7 +14,7 @@ class TicketController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->hasRole('Administrator')) {
+        if ($user->hasRole('Admin')) {
             // Admin xem tất cả tickets
             $tickets = Ticket::latest()->paginate(10);
         } elseif ($user->hasRole('Agent')) {
@@ -34,7 +36,10 @@ class TicketController extends Controller
     // Hiển thị form tạo mới ticket
     public function create()
     {
-        return view('tickets.create');
+        $categories = Category::all();
+        $labels = Label::all();
+
+        return view('tickets.create', compact('categories', 'labels'));
     }
 
     // Lưu ticket mới
@@ -44,9 +49,11 @@ class TicketController extends Controller
             'title'       => 'required|string|max:255',
             'description' => 'required|string',
             'priority'    => 'required|in:low,medium,high,critical',
+            'categories'  => 'required|array',
+            'labels'      => 'required|array',
         ]);
 
-        Ticket::create([
+        $ticket = Ticket::create([
             'title'       => $request->title,
             'description' => $request->description,
             'priority'    => $request->priority,
@@ -54,14 +61,18 @@ class TicketController extends Controller
             'created_by'  => Auth::id(),
         ]);
 
-        return redirect()->route('tickets.index')->with('success', 'Ticket created successfully.');
+        // Gắn Categories và Labels
+        $ticket->categories()->attach($request->categories);
+        $ticket->labels()->attach($request->labels);
+
+        return redirect()->route('tickets.index')->with('success', 'Ticket created successfully with categories and labels.');
     }
 
     // Hiển thị form chỉnh sửa ticket
     public function edit(Ticket $ticket)
     {
         // Quyền: Admin hoặc Agent (được assign) mới được sửa
-        if (Auth::user()->hasRole('Administrator') ||
+        if (Auth::user()->hasRole('Admin') ||
             (Auth::user()->hasRole('Agent') && Auth::id() === $ticket->assigned_user_agent_id)) {
             return view('tickets.edit', compact('ticket'));
         }
@@ -132,4 +143,27 @@ class TicketController extends Controller
 
         abort(403, 'Unauthorized action.');
     }
+
+    public function show($id)
+    {
+        $ticket = Ticket::with(['comments.user'])->findOrFail($id);
+        return view('tickets.show', compact('ticket'));
+    }
+
+    public function addComment(Request $request, $id)
+    {
+        $request->validate([
+            'content' => 'required|string',
+        ]);
+
+        $ticket = Ticket::findOrFail($id);
+
+        $ticket->comments()->create([
+            'user_id' => Auth::id(),
+            'content' => $request->content,
+        ]);
+
+        return redirect()->route('tickets.show', $id)->with('success', 'Comment added successfully.');
+    }
+
 }

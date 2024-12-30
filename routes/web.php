@@ -45,6 +45,7 @@ Route::middleware(['auth', 'role:Regular User'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     // Route cho danh sách tickets
     Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
+    Route::get('/tickets/{ticket}', [TicketController::class, 'show'])->name('tickets.show');
 
     // Route cho tạo ticket
     Route::get('/tickets/create', [TicketController::class, 'create'])->name('tickets.create');
@@ -57,6 +58,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Route cập nhật trạng thái ticket (admin)
     Route::post('/tickets/{ticket}/status', [TicketController::class, 'changeStatus'])->name('tickets.status.update');
+    Route::post('tickets/{id}/comment', [TicketController::class, 'addComment'])->name('tickets.addComment');
 
     Route::resource('categories', CategoryController::class);
 
