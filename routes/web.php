@@ -49,10 +49,14 @@ Route::middleware(['auth'])->group(function () {
 
     // Route cho tạo ticket
     Route::get('/tickets/create', [TicketController::class, 'create'])->name('tickets.create');
-    Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
+    Route::post('/tickets', [TicketController::class, 'store'])
+        ->middleware('check.ticket.permission:create')
+        ->name('tickets.store');
 
     // Route cho chỉnh sửa và xóa ticket (admin và agent)
-    Route::get('/tickets/{ticket}/edit', [TicketController::class, 'edit'])->name('tickets.edit');
+    Route::get('/tickets/{ticket}/edit', [TicketController::class, 'edit'])
+        ->middleware('check.ticket.permission:edit')
+        ->name('tickets.edit');
     Route::put('/tickets/{ticket}', [TicketController::class, 'update'])->name('tickets.update');
     Route::delete('/tickets/{ticket}', [TicketController::class, 'destroy'])->name('tickets.destroy');
 
