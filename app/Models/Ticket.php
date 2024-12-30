@@ -36,4 +36,9 @@ class Ticket extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class)->orderBy('created_at', 'asc');
+    }
 }

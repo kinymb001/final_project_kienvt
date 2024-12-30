@@ -8,7 +8,7 @@
             <i class="bi bi-arrow-left"></i> Back to Dashboard
         </a>
 
-        @if(Auth::user()->hasRole('Administrator') || Auth::user()->hasRole('Regular User'))
+        @if(Auth::user()->hasRole('Admin') || Auth::user()->hasRole('Regular User'))
             <a href="{{ route('tickets.create') }}" class="btn btn-success mb-3">Create New Ticket</a>
         @endif
 
@@ -30,7 +30,7 @@
                     <td>{{ $ticket->title }}</td>
                     <td>{{ ucfirst($ticket->priority) }}</td>
                     <td>
-                        @if(Auth::user()->hasRole('Administrator'))
+                        @if(Auth::user()->hasRole('Admin'))
                             <form method="POST" action="{{ route('tickets.status.update', $ticket->id) }}">
                                 @csrf
                                 <select name="status" onchange="this.form.submit()" class="form-select">
@@ -45,7 +45,7 @@
                     </td>
                     <td>{{ $ticket->assigned_user_agent_id ?? 'Unassigned' }}</td>
                     <td>
-                        @if(Auth::user()->hasRole('Administrator'))
+                        @if(Auth::user()->hasRole('Admin'))
                             <a href="{{ route('tickets.edit', $ticket->id) }}" class="btn btn-primary btn-sm">Edit</a>
                             <form action="{{ route('tickets.destroy', $ticket->id) }}" method="POST" style="display:inline;">
                                 @csrf
@@ -57,6 +57,11 @@
                         @else
                             <span class="text-muted">No Actions</span>
                         @endif
+                    </td>
+                    <td>
+                        <a href="{{ route('tickets.show', $ticket->id) }}" class="btn btn-info btn-sm">
+                            <i class="bi bi-eye"></i> View
+                        </a>
                     </td>
                 </tr>
             @empty
